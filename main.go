@@ -31,9 +31,9 @@ func main() {
 	rateService := &services.Rate{RateRepository: rateRepository}
 
 	controller := &controller.Controller{
-		CurrencyServices: currencyService,
-		RateServices:     rateService,
-		Helper:           helper,
+		RateService:     rateService,
+		CurrencyService: currencyService,
+		Helper:          helper,
 	}
 
 	routes := &routes.Routes{Ctr: controller}

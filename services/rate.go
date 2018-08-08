@@ -17,17 +17,16 @@ type Rate struct {
 type RateInterface interface {
 	Create(params models.Rate) (models.Rate, error)
 	FindAll() ([]models.Rate, error)
-	Update(id uint64, params models.Rate) (models.Rate, error)
-	Delete(id uint64) error
+	Update(id int64, params models.Rate) (models.Rate, error)
+	Delete(id int64) error
 }
 
 // Create is a function for create new exchange rate data
 func (c *Rate) Create(params models.Rate) (models.Rate, error) {
 
 	opts := &models.Rate{
-		BaseCurrency:    params.BaseCurrency,
-		CounterCurrency: params.CounterCurrency,
-		ExchangeDate:    params.ExchangeDate,
+		CurrencyID:   params.CurrencyID,
+		ExchangeDate: params.ExchangeDate,
 	}
 
 	data, _ := c.RateRepository.Find(opts)
@@ -58,12 +57,11 @@ func (c *Rate) FindAll() ([]models.Rate, error) {
 }
 
 // Update is a function for update exchange rate data
-func (c *Rate) Update(id uint64, params models.Rate) (models.Rate, error) {
+func (c *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
 
 	opts := &models.Rate{
-		ExchangeDate:    params.ExchangeDate,
-		BaseCurrency:    params.BaseCurrency,
-		CounterCurrency: params.CounterCurrency,
+		CurrencyID:   params.CurrencyID,
+		ExchangeDate: params.ExchangeDate,
 	}
 
 	rate, err := c.RateRepository.Find(opts)
@@ -82,12 +80,12 @@ func (c *Rate) Update(id uint64, params models.Rate) (models.Rate, error) {
 	return data, nil
 }
 
-// Delete is a function for delete available currency
-func (c *Rate) Delete(id uint64) error {
+// Delete is a function for soft delete exchange rate data
+func (c *Rate) Delete(id int64) error {
 
-	rate, err := c.RateRepository.Find(&models.Rate{ID: id})
-	if err != nil || len(rate) < 1 {
-		return errors.New("currency data not found")
+	data, err := c.RateRepository.Find(&models.Rate{ID: id})
+	if err != nil || len(data) < 1 {
+		return errors.New("data not found")
 	}
 
 	currentDate := time.Now()

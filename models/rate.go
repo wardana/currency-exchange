@@ -7,25 +7,33 @@ import (
 
 //Rate is a data strucrture for exchange_rate entities
 type Rate struct {
-	ID              uint64     `gorm:"primary_key" gorm:"column:id" json:"id"`
-	BaseCurrency    string     `gorm:"column:base_currency" json:"base_currency"`
-	CounterCurrency string     `gorm:"column:counter_currency" json:"counter_currency"`
-	ExchangeRate    float64    `gorm:"column:exchange_rate" json:"exchange_rate"`
-	ExchangeDate    time.Time  `gorm:"column:exchange_date" json:"exchange_date"`
-	CreatedAt       time.Time  `gorm:"column:createdAt" json:"createdAt"`
-	UpdatedAt       time.Time  `gorm:"column:updatedAt" json:"-"`
-	DeletedAt       *time.Time `gorm:"column:deletedAt" json:"-"`
+	ID           int64    `gorm:"primary_key" json:"id"`
+	Currency     Currency `gorm:"foreignkey:CurrencyID"` // use ProfileRefer as foreign key
+	CurrencyID   int64
+	ExchangeRate float64    `gorm:"column:exchange_rate" json:"exchange_rate"`
+	ExchangeDate time.Time  `gorm:"column:exchange_date" json:"exchange_date"`
+	CreatedAt    time.Time  `json:"created_at"`
+	UpdatedAt    time.Time  `json:"updated_at,omitempty"`
+	DeletedAt    *time.Time `sql:"index" json:"deleted_at,omitempty"`
+}
+
+//RatePayload is a data structure format for exchange_rate request and response api
+type RatePayload struct {
+	ExchangeRate    float64   `json:"exchange_rate"`
+	ExchangeDate    time.Time `json:"exchange_date"`
+	BaseCurrency    string    `json:"base_currency"`
+	CounterCurrency string    `json:"counter_currency"`
 }
 
 //UnmarshalJSON change data type from string to time
-func (r *Rate) UnmarshalJSON(b []byte) error {
+func (rp *RatePayload) UnmarshalJSON(b []byte) error {
 	var dateFormat = "2006-01-02" //YYYY-MM-DD
-	type Alias Rate
+	type Alias RatePayload
 	aux := &struct {
 		ExchangeDate string `json:"exchange_date"`
 		*Alias
 	}{
-		Alias: (*Alias)(r),
+		Alias: (*Alias)(rp),
 	}
 	if err := json.Unmarshal(b, &aux); err != nil {
 		return err
@@ -33,7 +41,7 @@ func (r *Rate) UnmarshalJSON(b []byte) error {
 
 	t, err := time.Parse(dateFormat, aux.ExchangeDate)
 	if err == nil {
-		r.ExchangeDate = t
+		rp.ExchangeDate = t
 	}
 
 	return nil

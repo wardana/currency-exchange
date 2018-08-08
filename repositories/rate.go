@@ -14,7 +14,7 @@ type (
 	RateInterface interface {
 		Create(params models.Rate) (models.Rate, error)
 		Find(params *models.Rate) ([]models.Rate, error)
-		Update(id uint64, params models.Rate) (models.Rate, error)
+		Update(id int64, params models.Rate) (models.Rate, error)
 	}
 )
 
@@ -36,7 +36,7 @@ func (c *Rate) Find(params *models.Rate) ([]models.Rate, error) {
 }
 
 //Update is a function to update currency data
-func (c *Rate) Update(id uint64, params models.Rate) (models.Rate, error) {
+func (c *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
 	data := models.Rate{
 		ID: id,
 	}

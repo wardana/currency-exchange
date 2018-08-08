@@ -50,9 +50,11 @@ func (r *Routes) NewRoutes() *echo.Echo {
 		e.POST("/api/v1/currency/create", r.Ctr.SaveCurrency)
 		e.PUT("/api/v1/currency/:id", r.Ctr.UpdateCurrency)
 		e.DELETE("/api/v1/currency/:id", r.Ctr.DeleteCurrency)
-		// exchange rate
 
-		e.POST("/api/v1/rate", r.Ctr.SaveNewRate)
+		// rate data
+		e.GET("/api/v1/rate", r.Ctr.FindAllRates)
+		e.POST("/api/v1/rate", r.Ctr.CreateNewRate)
+		e.DELETE("/api/v1/rate/:id", r.Ctr.RemoveRate)
 
 		wg.Done()
 	}()

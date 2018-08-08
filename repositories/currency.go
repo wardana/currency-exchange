@@ -14,7 +14,7 @@ type (
 	CurrencyInterface interface {
 		Create(params models.Currency) (models.Currency, error)
 		Find(params *models.Currency) ([]models.Currency, error)
-		Update(id uint64, params models.Currency) (models.Currency, error)
+		Update(id int64, params models.Currency) (models.Currency, error)
 	}
 )
 
@@ -36,10 +36,9 @@ func (c *Currency) Find(params *models.Currency) ([]models.Currency, error) {
 }
 
 //Update is a function to update currency data
-func (c *Currency) Update(id uint64, params models.Currency) (models.Currency, error) {
-	data := models.Currency{
-		ID: id,
-	}
+func (c *Currency) Update(id int64, params models.Currency) (models.Currency, error) {
+	data := models.Currency{ID: id}
+
 	if errs := c.DB.Model(&data).UpdateColumns(&params).GetErrors(); len(errs) > 0 {
 		return data, errs[0]
 	}
