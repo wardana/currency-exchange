@@ -8,7 +8,7 @@ import (
 //Rate is a data strucrture for exchange_rate entities
 type Rate struct {
 	ID           int64    `gorm:"primary_key" json:"id"`
-	Currency     Currency `gorm:"foreignkey:CurrencyID"` // use ProfileRefer as foreign key
+	Currency     Currency `gorm:"foreignkey:CurrencyID"` // us CurrencyID as foreign key
 	CurrencyID   int64
 	ExchangeRate float64    `gorm:"column:exchange_rate" json:"exchange_rate"`
 	ExchangeDate time.Time  `gorm:"column:exchange_date" json:"exchange_date"`
