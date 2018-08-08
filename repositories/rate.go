@@ -6,20 +6,20 @@ import (
 )
 
 type (
-	//Currency initialize currency class
-	Currency struct {
+	//Rate initialize exchange rate class
+	Rate struct {
 		DB *gorm.DB
 	}
-	//CurrencyInterface is an interface for currency entities
-	CurrencyInterface interface {
-		Create(params models.Currency) (models.Currency, error)
-		Find(params *models.Currency) ([]models.Currency, error)
-		Update(id uint64, params models.Currency) (models.Currency, error)
+	//RateInterface is an interface for currency entities
+	RateInterface interface {
+		Create(params models.Rate) (models.Rate, error)
+		Find(params *models.Rate) ([]models.Rate, error)
+		Update(id uint64, params models.Rate) (models.Rate, error)
 	}
 )
 
 //Create is a function to create new record
-func (c *Currency) Create(params models.Currency) (models.Currency, error) {
+func (c *Rate) Create(params models.Rate) (models.Rate, error) {
 	if errs := c.DB.Create(&params).GetErrors(); len(errs) > 0 {
 		return params, errs[0]
 	}
@@ -27,8 +27,8 @@ func (c *Currency) Create(params models.Currency) (models.Currency, error) {
 }
 
 //Find is a function to search currency data using currency code
-func (c *Currency) Find(params *models.Currency) ([]models.Currency, error) {
-	data := []models.Currency{}
+func (c *Rate) Find(params *models.Rate) ([]models.Rate, error) {
+	data := []models.Rate{}
 	if errs := c.DB.Where(params).Find(&data).GetErrors(); len(errs) > 0 {
 		return data, errs[0]
 	}
@@ -36,8 +36,8 @@ func (c *Currency) Find(params *models.Currency) ([]models.Currency, error) {
 }
 
 //Update is a function to update currency data
-func (c *Currency) Update(id uint64, params models.Currency) (models.Currency, error) {
-	data := models.Currency{
+func (c *Rate) Update(id uint64, params models.Rate) (models.Rate, error) {
+	data := models.Rate{
 		ID: id,
 	}
 	if errs := c.DB.Model(&data).UpdateColumns(&params).GetErrors(); len(errs) > 0 {

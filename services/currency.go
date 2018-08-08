@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	"github.com/wardana/currency-exchange/models"
@@ -18,14 +17,14 @@ type Currency struct {
 type CurrencyInterface interface {
 	Create(params models.Currency) (models.Currency, error)
 	FindAll() ([]models.Currency, error)
-	Update(id string, params models.Currency) (models.Currency, error)
-	Delete(id string) error
+	Update(id uint64, params models.Currency) (models.Currency, error)
+	Delete(id uint64) error
 }
 
 // Create is a function for create new curency data
 func (c *Currency) Create(params models.Currency) (models.Currency, error) {
 
-	opts := &models.Currency{Code: params.Code}
+	opts := &models.Currency{ISOCode: params.ISOCode}
 
 	data, _ := c.CurrencyRepository.Find(opts)
 	if len(data) > 0 {
@@ -41,8 +40,8 @@ func (c *Currency) Create(params models.Currency) (models.Currency, error) {
 
 // FindAll is a function for search available currency
 func (c *Currency) FindAll() ([]models.Currency, error) {
-	data := []models.Currency{}
-	data, err := c.CurrencyRepository.FindAll()
+
+	data, err := c.CurrencyRepository.Find(&models.Currency{}) //just leave it empty object
 	if err != nil {
 		return data, err
 	}
@@ -50,19 +49,18 @@ func (c *Currency) FindAll() ([]models.Currency, error) {
 }
 
 // Update is a function for update currency data
-func (c *Currency) Update(id string, params models.Currency) (models.Currency, error) {
-	idUint64, _ := strconv.ParseUint(id, 10, 64)
+func (c *Currency) Update(id uint64, params models.Currency) (models.Currency, error) {
 
-	currency, err := c.CurrencyRepository.Find(&models.Currency{Code: params.Code})
+	currency, err := c.CurrencyRepository.Find(&models.Currency{ISOCode: params.ISOCode})
 	if err != nil {
 		return models.Currency{}, err
 	}
 
-	if len(currency) > 0 && currency[0].ID != idUint64 {
+	if len(currency) > 0 && currency[0].ID != id {
 		return models.Currency{}, errors.New("invalid currency code")
 	}
 
-	data, err := c.CurrencyRepository.Update(idUint64, params)
+	data, err := c.CurrencyRepository.Update(id, params)
 	if err != nil {
 		return data, err
 	}
@@ -70,20 +68,15 @@ func (c *Currency) Update(id string, params models.Currency) (models.Currency, e
 }
 
 // Delete is a function for delete available currency
-func (c *Currency) Delete(id string) error {
-	idUint64, _ := strconv.ParseUint(id, 10, 64)
+func (c *Currency) Delete(id uint64) error {
 
-	currency, err := c.CurrencyRepository.Find(&models.Currency{ID: idUint64})
-	if err != nil {
-		return errors.New("invalid currency ID")
-	}
-
-	if len(currency) > 0 && currency[0].ID != idUint64 {
-		return errors.New("invalid currency code")
+	currency, err := c.CurrencyRepository.Find(&models.Currency{ID: id})
+	if err != nil || len(currency) < 1 {
+		return errors.New("currency data not found")
 	}
 
 	currentDate := time.Now()
-	_, err = c.CurrencyRepository.Update(idUint64, models.Currency{DeletedAt: &currentDate})
+	_, err = c.CurrencyRepository.Update(id, models.Currency{DeletedAt: &currentDate})
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,7 @@ package main
 
 import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	config "github.com/wardana/currency-exchange/configs"
+	"github.com/wardana/currency-exchange/config"
 	"github.com/wardana/currency-exchange/controller"
 	"github.com/wardana/currency-exchange/helper"
 	"github.com/wardana/currency-exchange/models"
@@ -11,25 +11,30 @@ import (
 	"github.com/wardana/currency-exchange/services"
 )
 
-func seed() {
+func init() {
+	config.ReadConfig(&config.Configuration)
+	config.SetupEnvironment(&config.Environtment)
+
+	//try to create MySQL table
 	config.Environtment.MySQL.CreateTable(&models.Currency{})
 	config.Environtment.MySQL.CreateTable(&models.Rate{})
 }
 
-func init() {
-	config.ReadConfig(&config.Configuration)
-	config.SetupEnvironment(&config.Environtment)
-}
-
 func main() {
-
-	seed()
 
 	helper := &helper.Helper{}
 
 	currencyRepository := &repositories.Currency{DB: config.Environtment.MySQL}
 	currencyService := &services.Currency{CurrencyRepository: currencyRepository}
-	controller := &controller.Controller{CurrencyServices: currencyService, Helper: helper}
+
+	rateRepository := &repositories.Rate{DB: config.Environtment.MySQL}
+	rateService := &services.Rate{RateRepository: rateRepository}
+
+	controller := &controller.Controller{
+		CurrencyServices: currencyService,
+		RateServices:     rateService,
+		Helper:           helper,
+	}
 
 	routes := &routes.Routes{Ctr: controller}
 

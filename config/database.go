@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	//get postgres gorm extension
+	//get mysql gorm extension
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
