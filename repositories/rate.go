@@ -7,21 +7,10 @@ import (
 	"github.com/wardana/currency-exchange/models"
 )
 
-type (
-	//Rate initialize exchange rate class
-	Rate struct {
-		DB *gorm.DB
-	}
-	//RateInterface is an interface for rate entities
-	RateInterface interface {
-		Create(params models.Rate) (models.Rate, error)
-		Find(params *models.Rate) ([]models.Rate, error)
-		Update(id int64, params models.Rate) (models.Rate, error)
-		RemoveByPairID(id int64) error
-		TrendDataByCurrency(base, counter string) ([]models.ExchangeData, error)
-		ExchangeDataByDate(date time.Time) ([]models.RatePayload, error)
-	}
-)
+//Rate initialize exchange rate class
+type Rate struct {
+	DB *gorm.DB
+}
 
 //TrendDataByCurrency get 7 latest currency rate data using currency code
 func (r *Rate) TrendDataByCurrency(base, counter string) ([]models.ExchangeData, error) {

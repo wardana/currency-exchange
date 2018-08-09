@@ -5,18 +5,10 @@ import (
 	"github.com/wardana/currency-exchange/models"
 )
 
-type (
-	//CurrencyPair initialize currency class
-	CurrencyPair struct {
-		DB *gorm.DB
-	}
-	//CurrencyPairInterface is an interface for CurrencyPair entities
-	CurrencyPairInterface interface {
-		Create(params models.CurrencyPair) (models.CurrencyPair, error)
-		Find(params *models.CurrencyPair) ([]models.CurrencyPair, error)
-		Update(id int64, params models.CurrencyPair) (models.CurrencyPair, error)
-	}
-)
+//CurrencyPair initialize currency class
+type CurrencyPair struct {
+	DB *gorm.DB
+}
 
 //Create is a function to create new record
 func (c *CurrencyPair) Create(params models.CurrencyPair) (models.CurrencyPair, error) {
