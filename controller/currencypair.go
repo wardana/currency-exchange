@@ -7,17 +7,17 @@ import (
 	"github.com/wardana/currency-exchange/models"
 )
 
-//SaveCurrency is a handler for create new currency
+//SaveCurrency is a handler for create new currency pair
 func (ctr *Controller) SaveCurrency(c echo.Context) error {
 
-	payload := models.Currency{}
+	payload := models.CurrencyPair{}
 
 	// Throw err response when payload is not valid
 	if err := c.Bind(&payload); err != nil {
 		return ctr.Helper.HTTPBadRequest(c, "invalid payload")
 	}
 
-	data, err := ctr.CurrencyService.Create(payload)
+	data, err := ctr.CurrencyPairService.Create(payload)
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}
@@ -25,10 +25,10 @@ func (ctr *Controller) SaveCurrency(c echo.Context) error {
 	return ctr.Helper.HTTPCreated(c, data)
 }
 
-// FindAllCurrency is a handler for get all available currency
+// FindAllCurrency is a handler for get all available currency pair
 func (ctr *Controller) FindAllCurrency(c echo.Context) error {
 
-	data, err := ctr.CurrencyService.FindAll()
+	data, err := ctr.CurrencyPairService.FindAll()
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}
@@ -36,10 +36,10 @@ func (ctr *Controller) FindAllCurrency(c echo.Context) error {
 	return ctr.Helper.HTTPSuccess(c, data)
 }
 
-// UpdateCurrency is a handler for get all available currency
+// UpdateCurrency is a handler for get all available currency pair
 func (ctr *Controller) UpdateCurrency(c echo.Context) error {
 
-	payload := models.Currency{}
+	payload := models.CurrencyPair{}
 
 	id := c.Param("id")
 
@@ -58,7 +58,7 @@ func (ctr *Controller) UpdateCurrency(c echo.Context) error {
 		return ctr.Helper.HTTPBadRequest(c, "invalid type")
 	}
 
-	data, err := ctr.CurrencyService.Update(idInt64, payload)
+	data, err := ctr.CurrencyPairService.Update(idInt64, payload)
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}
@@ -66,7 +66,7 @@ func (ctr *Controller) UpdateCurrency(c echo.Context) error {
 	return ctr.Helper.HTTPSuccess(c, data)
 }
 
-// DeleteCurrency is a handler for delete some currency data using its id
+// DeleteCurrency is a handler for delete some currency pair data using its id
 func (ctr *Controller) DeleteCurrency(c echo.Context) error {
 
 	id := c.Param("id")
@@ -81,7 +81,7 @@ func (ctr *Controller) DeleteCurrency(c echo.Context) error {
 		return ctr.Helper.HTTPBadRequest(c, "invalid type")
 	}
 
-	err := ctr.CurrencyService.Delete(idInt64)
+	err := ctr.CurrencyPairService.Delete(idInt64)
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}

@@ -54,6 +54,7 @@ func (r *Routes) NewRoutes() *echo.Echo {
 		// rate data
 		e.GET("/api/v1/rate", r.Ctr.FindAllRates)
 		e.POST("/api/v1/rate", r.Ctr.CreateNewRate)
+		e.GET("/api/v1/rate/latest", r.Ctr.FindLatestDataByDate)
 		e.DELETE("/api/v1/rate/:id", r.Ctr.RemoveRate)
 
 		wg.Done()

@@ -19,27 +19,28 @@ type RateInterface interface {
 	FindAll() ([]models.Rate, error)
 	Update(id int64, params models.Rate) (models.Rate, error)
 	Delete(id int64) error
+	HistoricalDataByDate(date time.Time) (*[]models.RatePayload, error)
 }
 
 // Create is a function for create new exchange rate data
-func (c *Rate) Create(params models.Rate) (models.Rate, error) {
+func (r *Rate) Create(params models.Rate) (models.Rate, error) {
 
 	opts := &models.Rate{
-		CurrencyID:   params.CurrencyID,
-		ExchangeDate: params.ExchangeDate,
+		CurrencyPairID: params.CurrencyPairID,
+		ExchangeDate:   params.ExchangeDate,
 	}
 
-	data, _ := c.RateRepository.Find(opts)
+	data, _ := r.RateRepository.Find(opts)
 	if len(data) > 0 {
 		//try to update currency right here
-		result, err := c.RateRepository.Update(data[0].ID, params)
+		result, err := r.RateRepository.Update(data[0].ID, params)
 		if err != nil {
 			return result, err
 		}
 		return result, nil
 	}
 
-	result, err := c.RateRepository.Create(params)
+	result, err := r.RateRepository.Create(params)
 	if err != nil {
 		return result, err
 	}
@@ -47,9 +48,9 @@ func (c *Rate) Create(params models.Rate) (models.Rate, error) {
 }
 
 // FindAll is a function for search available exchange rate
-func (c *Rate) FindAll() ([]models.Rate, error) {
+func (r *Rate) FindAll() ([]models.Rate, error) {
 
-	data, err := c.RateRepository.Find(&models.Rate{}) //just leave it empty object
+	data, err := r.RateRepository.Find(&models.Rate{}) //just leave it empty object
 	if err != nil {
 		return data, err
 	}
@@ -57,14 +58,14 @@ func (c *Rate) FindAll() ([]models.Rate, error) {
 }
 
 // Update is a function for update exchange rate data
-func (c *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
+func (r *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
 
 	opts := &models.Rate{
-		CurrencyID:   params.CurrencyID,
-		ExchangeDate: params.ExchangeDate,
+		CurrencyPairID: params.CurrencyPairID,
+		ExchangeDate:   params.ExchangeDate,
 	}
 
-	rate, err := c.RateRepository.Find(opts)
+	rate, err := r.RateRepository.Find(opts)
 	if err != nil {
 		return models.Rate{}, err
 	}
@@ -73,7 +74,7 @@ func (c *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
 		return models.Rate{}, errors.New("invalid currency code")
 	}
 
-	data, err := c.RateRepository.Update(id, params)
+	data, err := r.RateRepository.Update(id, params)
 	if err != nil {
 		return data, err
 	}
@@ -81,17 +82,28 @@ func (c *Rate) Update(id int64, params models.Rate) (models.Rate, error) {
 }
 
 // Delete is a function for soft delete exchange rate data
-func (c *Rate) Delete(id int64) error {
+func (r *Rate) Delete(id int64) error {
 
-	data, err := c.RateRepository.Find(&models.Rate{ID: id})
+	data, err := r.RateRepository.Find(&models.Rate{ID: id})
 	if err != nil || len(data) < 1 {
 		return errors.New("data not found")
 	}
 
 	currentDate := time.Now()
-	_, err = c.RateRepository.Update(id, models.Rate{DeletedAt: &currentDate})
+	_, err = r.RateRepository.Update(id, models.Rate{DeletedAt: &currentDate})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+//HistoricalDataByDate is a service for get historical data using specify date
+func (r *Rate) HistoricalDataByDate(date time.Time) (*[]models.RatePayload, error) {
+
+	data, err := r.RateRepository.HistoricalDataByDate(date)
+	if err != nil {
+		return data, err
+	}
+	return data, nil
+
 }

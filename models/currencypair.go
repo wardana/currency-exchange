@@ -2,8 +2,8 @@ package models
 
 import "time"
 
-// Currency is a base currency exchange
-type Currency struct {
+// CurrencyPair is a base currency exchange
+type CurrencyPair struct {
 	ID              int64      `gorm:"primary_key" json:"id"`
 	BaseCurrency    string     `gorm:"column:base_currency" json:"base_currency"`
 	CounterCurrency string     `gorm:"column:counter_currency" json:"counter_currency"`
@@ -13,6 +13,6 @@ type Currency struct {
 }
 
 //TableName get current table name
-func (Currency) TableName() string {
-	return "currency"
+func (CurrencyPair) TableName() string {
+	return "currency_pair"
 }

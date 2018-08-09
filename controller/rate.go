@@ -3,6 +3,7 @@ package controller
 import (
 	"reflect"
 	"strconv"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/wardana/currency-exchange/models"
@@ -18,20 +19,25 @@ func (ctr *Controller) CreateNewRate(c echo.Context) error {
 		return ctr.Helper.HTTPBadRequest(c, err.Error())
 	}
 
-	opts := models.Currency{
+	opts := models.CurrencyPair{
 		BaseCurrency:    payload.BaseCurrency,
 		CounterCurrency: payload.CounterCurrency,
 	}
 
-	currency, err := ctr.CurrencyService.FindOne(opts)
-	if err != nil || reflect.DeepEqual(models.Currency{}, currency) {
+	currencyPair, err := ctr.CurrencyPairService.FindOne(opts)
+	if err != nil || reflect.DeepEqual(models.CurrencyPair{}, currencyPair) {
 		return ctr.Helper.HTTPBadRequest(c, "currency not found")
 	}
 
+	floatExchangeRate, err := strconv.ParseFloat("0.4", 64)
+	if err != nil {
+		return ctr.Helper.HTTPBadRequest(c, "invalid rate format, rate should be number")
+	}
+
 	params := models.Rate{
-		CurrencyID:   currency.ID,
-		ExchangeDate: payload.ExchangeDate,
-		ExchangeRate: payload.ExchangeRate,
+		CurrencyPairID: currencyPair.ID,
+		ExchangeDate:   payload.ExchangeDate,
+		ExchangeRate:   floatExchangeRate,
 	}
 
 	_, err = ctr.RateService.Create(params)
@@ -69,6 +75,35 @@ func (ctr *Controller) RemoveRate(c echo.Context) error {
 func (ctr *Controller) FindAllRates(c echo.Context) error {
 
 	data, err := ctr.RateService.FindAll()
+	if err != nil {
+		return ctr.Helper.HTTPInternalServerError(c, err.Error())
+	}
+
+	return ctr.Helper.HTTPSuccess(c, data)
+}
+
+//FindLatestDataByDate find latest data using date as parameter
+func (ctr *Controller) FindLatestDataByDate(c echo.Context) error {
+
+	var date time.Time
+
+	dateStr := c.QueryParam("date")
+
+	if dateStr == "" {
+		tmp := time.Now()
+
+		dateWithoutTime, _ := time.Parse("2006-01-02", tmp.Format("2006-01-02"))
+		date = dateWithoutTime
+	} else {
+		t, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			return ctr.Helper.HTTPBadRequest(c, "invalid date format")
+		}
+
+		date = t
+	}
+
+	data, err := ctr.RateService.HistoricalDataByDate(date)
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}
