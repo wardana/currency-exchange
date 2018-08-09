@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 )
 
@@ -25,27 +26,33 @@ type RatePayload struct {
 	WeeklyAverage   float64   `gorm:"column:7day_avg" json:"weekly_average"`
 }
 
-// //UnmarshalJSON change data type from string to time
-// func (rp *RatePayload) UnmarshalJSON(b []byte) error {
-// 	var dateFormat = "2006-01-02" //YYYY-MM-DD
-// 	type Alias RatePayload
-// 	aux := &struct {
-// 		ExchangeDate string `json:"exchange_date"`
-// 		*Alias
-// 	}{
-// 		Alias: (*Alias)(rp),
-// 	}
-// 	if err := json.Unmarshal(b, &aux); err != nil {
-// 		return err
-// 	}
+//ExchangeData is a data structure format for exchange_rate request and response api
+type ExchangeData struct {
+	ExchangeRate float64   `gorm:"column:exchange_rate" json:"exchange_rate"`
+	ExchangeDate time.Time `gorm:"column:exchange_date" json:"exchange_date"`
+}
 
-// 	t, err := time.Parse(dateFormat, aux.ExchangeDate)
-// 	if err == nil {
-// 		rp.ExchangeDate = t
-// 	}
+//UnmarshalJSON change data type from string to time
+func (rp *RatePayload) UnmarshalJSON(b []byte) error {
+	var dateFormat = "2006-01-02" //YYYY-MM-DD
+	type Alias RatePayload
+	aux := &struct {
+		ExchangeDate string `json:"exchange_date"`
+		*Alias
+	}{
+		Alias: (*Alias)(rp),
+	}
+	if err := json.Unmarshal(b, &aux); err != nil {
+		return err
+	}
 
-// 	return nil
-// }
+	t, err := time.Parse(dateFormat, aux.ExchangeDate)
+	if err == nil {
+		rp.ExchangeDate = t
+	}
+
+	return nil
+}
 
 //TableName get current table name
 func (Rate) TableName() string {

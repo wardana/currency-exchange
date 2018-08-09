@@ -82,8 +82,8 @@ func (ctr *Controller) FindAllRates(c echo.Context) error {
 	return ctr.Helper.HTTPSuccess(c, data)
 }
 
-//FindLatestDataByDate find latest data using date as parameter
-func (ctr *Controller) FindLatestDataByDate(c echo.Context) error {
+//FindExchangeDataByDate find latest data using date as parameter
+func (ctr *Controller) FindExchangeDataByDate(c echo.Context) error {
 
 	var date time.Time
 
@@ -103,10 +103,58 @@ func (ctr *Controller) FindLatestDataByDate(c echo.Context) error {
 		date = t
 	}
 
-	data, err := ctr.RateService.HistoricalDataByDate(date)
+	data, err := ctr.RateService.ExchangeDataByDate(date)
 	if err != nil {
 		return ctr.Helper.HTTPInternalServerError(c, err.Error())
 	}
 
 	return ctr.Helper.HTTPSuccess(c, data)
+}
+
+//TrendDataByCurrency find latest data using iso currency code as parameter
+func (ctr *Controller) TrendDataByCurrency(c echo.Context) error {
+
+	var arrRate []float64
+
+	type ExchangeData struct {
+		ExchangeDate float64 `json:"exchange_date"`
+		ExchangeRate float64 `json:"exchange_rate"`
+	}
+
+	base := c.QueryParam("base")
+	counter := c.QueryParam("counter")
+
+	if base == "" && counter == "" {
+		return ctr.Helper.HTTPBadRequest(c, "you need to specify base and counter currency")
+	}
+
+	data, err := ctr.RateService.TrendDataByCurrency(base, counter)
+	if err != nil {
+		return ctr.Helper.HTTPInternalServerError(c, err.Error())
+	}
+
+	if len(data) > 0 {
+		for _, item := range data {
+			arrRate = append(arrRate, item.ExchangeRate)
+		}
+	}
+
+	min, max, average := ctr.Helper.MinMaxAverageInSlices(arrRate)
+
+	//construct response
+	response := &struct {
+		BaseCurrency    string                `json:"base_currency"`
+		CounterCurrency string                `json:"counter_currency"`
+		Average         float64               `json:"average"`
+		Variance        float64               `json:"variance"`
+		History         []models.ExchangeData `json:"history"`
+	}{
+		BaseCurrency:    base,
+		CounterCurrency: counter,
+		Average:         average,
+		Variance:        max - min,
+		History:         data,
+	}
+
+	return ctr.Helper.HTTPSuccess(c, response)
 }

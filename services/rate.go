@@ -19,7 +19,8 @@ type RateInterface interface {
 	FindAll() ([]models.Rate, error)
 	Update(id int64, params models.Rate) (models.Rate, error)
 	Delete(id int64) error
-	HistoricalDataByDate(date time.Time) (*[]models.RatePayload, error)
+	ExchangeDataByDate(date time.Time) ([]models.RatePayload, error)
+	TrendDataByCurrency(base, counter string) ([]models.ExchangeData, error)
 }
 
 // Create is a function for create new exchange rate data
@@ -97,10 +98,21 @@ func (r *Rate) Delete(id int64) error {
 	return nil
 }
 
-//HistoricalDataByDate is a service for get historical data using specify date
-func (r *Rate) HistoricalDataByDate(date time.Time) (*[]models.RatePayload, error) {
+//ExchangeDataByDate is a service for get available currency exchange data using specify date
+func (r *Rate) ExchangeDataByDate(date time.Time) ([]models.RatePayload, error) {
 
-	data, err := r.RateRepository.HistoricalDataByDate(date)
+	data, err := r.RateRepository.ExchangeDataByDate(date)
+	if err != nil {
+		return data, err
+	}
+	return data, nil
+
+}
+
+//TrendDataByCurrency is a service for get trend data using specify currency code
+func (r *Rate) TrendDataByCurrency(base, counter string) ([]models.ExchangeData, error) {
+
+	data, err := r.RateRepository.TrendDataByCurrency(base, counter)
 	if err != nil {
 		return data, err
 	}

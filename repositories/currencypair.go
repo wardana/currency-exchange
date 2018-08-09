@@ -20,8 +20,8 @@ type (
 
 //Create is a function to create new record
 func (c *CurrencyPair) Create(params models.CurrencyPair) (models.CurrencyPair, error) {
-	if errs := c.DB.Create(&params).GetErrors(); len(errs) > 0 {
-		return params, errs[0]
+	if err := c.DB.Create(&params).Error; err != nil {
+		return params, err
 	}
 	return params, nil
 }
@@ -29,8 +29,8 @@ func (c *CurrencyPair) Create(params models.CurrencyPair) (models.CurrencyPair, 
 //Find is a function to search CurrencyPair data using CurrencyPair code
 func (c *CurrencyPair) Find(params *models.CurrencyPair) ([]models.CurrencyPair, error) {
 	data := []models.CurrencyPair{}
-	if errs := c.DB.Where(params).Find(&data).GetErrors(); len(errs) > 0 {
-		return data, errs[0]
+	if err := c.DB.Where(params).Find(&data).Error; err != nil {
+		return data, err
 	}
 	return data, nil
 }
@@ -39,8 +39,8 @@ func (c *CurrencyPair) Find(params *models.CurrencyPair) ([]models.CurrencyPair,
 func (c *CurrencyPair) Update(id int64, params models.CurrencyPair) (models.CurrencyPair, error) {
 	data := models.CurrencyPair{ID: id}
 
-	if errs := c.DB.Model(&data).UpdateColumns(&params).GetErrors(); len(errs) > 0 {
-		return data, errs[0]
+	if err := c.DB.Model(&data).UpdateColumns(&params).Error; err != nil {
+		return data, err
 	}
 	return data, nil
 }
