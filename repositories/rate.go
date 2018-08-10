@@ -36,7 +36,7 @@ func (r *Rate) ExchangeDataByDate(date time.Time) ([]models.RatePayload, error) 
 			from currency_pair cp
 			join rate r on cp.id = r.currency_pair_id
 			where r.deleted_at is null and cp.deleted_at is null
-			and r.exchange_date between (? - interval 7 day) and current_date
+			and date(r.exchange_date) between (? - interval 7 day) and current_date
 			group by 1
 		) a on a.id = cp.id
 		where r.deleted_at is null and cp.deleted_at is null
