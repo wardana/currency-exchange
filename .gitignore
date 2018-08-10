@@ -3,7 +3,8 @@
 ## environtment file ##
 config.yaml
 *.http
-
+vendor
+data
 ### Go ###
 # Binaries for programs and plugins
 *.exe

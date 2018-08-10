@@ -1,0 +1,35 @@
+# https://docs.docker.com/compose/compose-file
+# docker-compose up
+# docker-compose stop
+# docker-compose down
+version: '3.4'
+
+networks:
+  shared-network:
+    driver: bridge
+    
+services:
+  # db:
+  #   image: mysql:latest
+  #   volumes:
+  #     - ./data/db:/var/lib/mysql
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: passwordROOT2018
+  #     MYSQL_USER: CE
+  #     MYSQL_PASSWORD: passwordCE2018
+  #     MYSQL_DATABASE: currency_exchange
+  #   ports:
+  #     - 3306:3306
+  #   networks:
+  #     - shared-network
+
+  apps:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - shared-network
+    # links: 
+    #   - db

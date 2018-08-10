@@ -1,0 +1,9 @@
+package: github.com/wardana/currency-exchange
+import:
+- package: github.com/jinzhu/gorm
+  subpackages:
+  - dialects/mysql
+- package: github.com/labstack/echo
+  subpackages:
+  - middleware
+- package: gopkg.in/yaml.v2
