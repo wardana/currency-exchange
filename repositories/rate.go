@@ -28,6 +28,8 @@ func (r *Rate) TrendDataByCurrency(base, counter string) ([]models.ExchangeData,
 //ExchangeDataByDate get historical data using specify date
 func (r *Rate) ExchangeDataByDate(date time.Time) ([]models.RatePayload, error) {
 	data := []models.RatePayload{}
+	//this is weird it should be like this on sql editor but its work
+	//left join rate r on cp.id = r.currency_pair_id and date(r.exchange_date) = ?
 	query := `select cp.base_currency, cp.counter_currency, r.exchange_date as "exchange_date", COALESCE(r.exchange_rate, 0) as "exchange_rate", a.7day_avg
 		from currency_pair cp
 		left join rate r on cp.id = r.currency_pair_id and r.exchange_date = ?
