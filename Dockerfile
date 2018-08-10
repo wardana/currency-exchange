@@ -1,5 +1,5 @@
 FROM golang:latest
-# RUN go get -u github.com/golang/dep
+RUN go get -u github.com/golang/dep
 
 RUN  mkdir -p /go/src \
   && mkdir -p /go/bin \
