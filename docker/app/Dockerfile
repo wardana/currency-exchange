@@ -28,4 +28,3 @@ RUN chmod +x /wait
 
 ## Launch the wait tool and then your application
 CMD /wait && go run main.go
-
