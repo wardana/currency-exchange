@@ -9,27 +9,37 @@ networks:
     driver: bridge
     
 services:
-  # db:
-  #   image: mysql:latest
-  #   volumes:
-  #     - ./data/db:/var/lib/mysql
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: passwordROOT2018
-  #     MYSQL_USER: CE
-  #     MYSQL_PASSWORD: passwordCE2018
-  #     MYSQL_DATABASE: currency_exchange
-  #   ports:
-  #     - 3306:3306
-  #   networks:
-  #     - shared-network
-
-  apps:
+  db:
     build:
-      context: . 
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: docker/db/Dockerfile
     ports:
-      - 8080:8080
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: passwordROOT2018
+      MYSQL_USER: CE
+      MYSQL_PASSWORD: passwordCE2018
+      MYSQL_DATABASE: currency_exchange
+    # sync folders. MySQL data is stored outside container so that rebuilding doesn't clear db.
+    # folder is at workspace root.
+    volumes:
+      - ../../../../_local_mysql_data:/var/lib/mysql
     networks:
       - shared-network
-    # links: 
-    #   - db
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    # ports from container exposed to the docker machine and the guest machine
+    ports:
+      - "8080:8080" # http
+    depends_on:
+      - "db"
+    volumes:
+      - ../../../../.:/go
+    networks: 
+      - shared-network
+    environment:
+      WAIT_HOSTS: db:3306
+
+        

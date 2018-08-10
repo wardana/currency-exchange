@@ -1,0 +1,8 @@
+port: 8080
+mysql:
+  db: currency_exchange
+  host: db
+  port: 3306
+  username: CE
+  password: passwordCE2018
+  log_mode: true
