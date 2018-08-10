@@ -1,7 +1,7 @@
 
 # Created by https://www.gitignore.io/api/go,macos,visualstudiocode
 ## environtment file ##
-config.yaml
+# config.yaml
 *.http
 vendor
 data
