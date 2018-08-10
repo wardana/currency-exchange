@@ -13,6 +13,7 @@ ENV APP_PATH=/go/src/github.com/wardana/currency-exchange
 RUN mkdir -p $APP_PATH
 WORKDIR $APP_PATH
 
+## move config and dependencies 
 COPY glide.yaml glide.yaml
 COPY glide.lock glide.lock
 COPY config.yaml config.yaml
@@ -27,3 +28,4 @@ RUN chmod +x /wait
 
 ## Launch the wait tool and then your application
 CMD /wait && go run main.go
+
