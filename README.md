@@ -143,6 +143,7 @@ Content-Type: application/json
   "exchange_rate": 0.5, // float
   "exchange_date": "2018-08-11" //format 'YYYY-MM-DD'
 }
+
 ## Success Response
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
