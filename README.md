@@ -208,7 +208,6 @@ counter= currency_id
 example: ?base=IDR&counter=USD
 
 ## Success Response
-
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=UTF-8
 Date: Sat, 11 Aug 2018 10:06:49 GMT
