@@ -56,7 +56,7 @@ func (c *CurrencyPair) FindOne(params models.CurrencyPair) (models.CurrencyPair,
 
 	resp, err := c.CurrencyPairRepository.Find(&params)
 	if err != nil || reflect.DeepEqual([]models.CurrencyPair{}, resp) {
-		return models.CurrencyPair{}, err
+		return models.CurrencyPair{}, errors.New("data not found")
 	}
 	return resp[0], nil
 }
