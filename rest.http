@@ -1,0 +1,45 @@
+## User wants to add an exchange rate to the list
+POST http://localhost:8080/api/v1/currency/create
+Content-Type: application/json
+
+{
+  "base_currency": "IDR",
+  "counter_currency": "GBR"
+}
+###
+
+## User wants to add an exchange rate to the list
+POST http://localhost:8080/api/v1/currency/create
+Content-Type: application/json
+
+{
+  "base_currency": "IDR",
+  "counter_currency": "USD"
+}
+###
+
+## User has a list of currency pair to be tracked
+GET http://localhost:8080/api/v1/currency
+###
+
+## User wants to input daily exchange rate data
+POST http://localhost:8080/api/v1/rate
+Content-Type: application/json
+
+{
+  "base_currency": "IDR",
+  "counter_currency": "GBR",
+  "exchange_rate": 0.5,
+  "exchange_date": "2018-08-12"
+}
+####
+## User has a list of exchange rates to be tracked
+GET http://localhost:8080/api/v1/rate/exchange?date=2018-08-12
+
+###
+## User wants to see the exchange rate trend from the most recent 7 data points
+GET http://localhost:8080/api/v1/rate/trend?base=IDR&counter=GBR
+###
+
+## User wants to remove an exchange rate from the list 
+DELETE http://localhost:8080/api/v1/currency/1

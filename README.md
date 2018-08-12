@@ -21,6 +21,8 @@ notes:  make sure mysql in docker expose your mysql port and also for applicatio
 - User wants to see the exchange rate trend from the most recent 7 data points
 
 # Exposed Endpoint #
+Please take a look at `rest.http` file for sample request.
+
 `GET /api/v1/currency`
 ```
 ## Purposes
