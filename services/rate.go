@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/wardana/currency-exchange/models"
@@ -32,6 +33,8 @@ func (r *Rate) Create(params models.Rate) (models.Rate, error) {
 	}
 
 	data, _ := r.RateRepository.Find(opts)
+	fmt.Println("debug currenct data")
+	fmt.Println(len(data))
 	if len(data) > 0 {
 		//try to update currency right here
 		result, err := r.RateRepository.Update(data[0].ID, params)
@@ -106,7 +109,6 @@ func (r *Rate) ExchangeDataByDate(date time.Time) ([]models.RatePayload, error) 
 		return data, err
 	}
 	return data, nil
-
 }
 
 //TrendDataByCurrency is a service for get trend data using specify currency code
@@ -117,5 +119,4 @@ func (r *Rate) TrendDataByCurrency(base, counter string) ([]models.ExchangeData,
 		return data, err
 	}
 	return data, nil
-
 }

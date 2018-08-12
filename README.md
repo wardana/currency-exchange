@@ -238,6 +238,11 @@ Content-Length: 574
 
 ###
 
+### Run Your Test ###
+```
+$ go test ./... -covermode=count
+```
+
 ### Run Your Applicaiton ###
 ```
 $ docker-compose up
